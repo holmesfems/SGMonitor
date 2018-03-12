@@ -61,9 +61,18 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
+    <ClCompile Include="CmdHelper.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ParamSet.cpp" />
+    <ClCompile Include="stringTool.cpp" />
+    <ClCompile Include="tcpClient.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CmdHelper.h" />
+    <ClInclude Include="ParamSet.h" />
+    <ClInclude Include="stringTool.h" />
+    <ClInclude Include="stringTool_util.h" />
+    <ClInclude Include="tcpClient.h" />
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
