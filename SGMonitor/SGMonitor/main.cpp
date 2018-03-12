@@ -13,6 +13,8 @@
 #include "tcpClient.h"
 #include "CmdHelper.h"
 
+uint16_t sgPort = 5025;
+
 int makeClient(std::string ip, uint16_t port)
 {
     std::string msg;
@@ -38,8 +40,8 @@ int makeClient(std::string ip, uint16_t port)
     return 0;
 }
 
-int main()
+int main(int argc,char *argv[])
 {
-    printf("hello from SGMonitor!\n");
+    
     return 0;
 }
