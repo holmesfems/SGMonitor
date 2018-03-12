@@ -9,11 +9,32 @@
 #include <thread>
 #include <vector>
 #include <algorithm>
+#include <functional>
 #include <fstream>
 #include "tcpClient.h"
 #include "CmdHelper.h"
 
+//using CmdGeneratorFunc = std::function<std::string(ParamSet::Params &)>;
+
 uint16_t sgPort = 5025;
+CmdHelper::CmdHelper cmdHelper;
+
+std::string askFreq(ParamSet::Params &e)
+{
+	return ":FREQ?";
+}
+
+std::string setFreq(ParamSet::Params &e)
+{
+	ParamSet::ParamHelper pHelper;
+	std::string value;
+	
+}
+
+int initialize()
+{
+	return 0;
+}
 
 int makeClient(std::string ip, uint16_t port)
 {
@@ -39,6 +60,8 @@ int makeClient(std::string ip, uint16_t port)
     thread.join();
     return 0;
 }
+
+
 
 int main(int argc,char *argv[])
 {

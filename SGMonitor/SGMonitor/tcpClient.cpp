@@ -7,6 +7,9 @@
 */
 
 #include "tcpClient.h"
+#include <thread>
+#include <chrono>
+
 namespace TcpClient
 {
 	TcpClient::TcpClient(boost::asio::io_service & io_service):
@@ -27,8 +30,21 @@ namespace TcpClient
 	{
 		bool is_sending = !_msgQueue.empty();
 		_msgQueue.push(msg);
+		_receive_msg = _receive_msg_writer.get_future(); //Reset msg_status
 		if(!is_sending)
 			_io.post(boost::bind(&TcpClient::_async_write, this));
+	}
+
+	std::string TcpClient::lastRecv()
+	{
+		if (auto status = _receive_msg.wait_for(std::chrono::seconds(_timeout)) == std::future_status::ready)
+		{
+			return _receive_msg.get();
+		}
+		else
+		{
+			return "MSG NOT VALID";
+		}
 	}
 
 	void TcpClient::_on_connect(const boost::system::error_code & err)
@@ -66,6 +82,7 @@ namespace TcpClient
 			std::string data = std::string(boost::asio::buffer_cast<const char*>(_receive_buff.data()), bytes_transferred);
 			data = data.substr(0, data.length() - 1);
 			std::cout << "reply = \"" << data << "\"" << std::endl;
+			_receive_msg_writer.set_value(data); //Msg is ready
 			_receive_buff.consume(_receive_buff.size());
 			_async_receive();
 			//if(status == ONLINE)
@@ -101,6 +118,4 @@ namespace TcpClient
 		}
 		//std::cout << "exit_on_write" << std::endl;
 	}
-
-	
 }
