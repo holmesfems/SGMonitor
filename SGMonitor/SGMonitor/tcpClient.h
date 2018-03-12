@@ -29,6 +29,7 @@ namespace TcpClient
 		void send(std::string msg);
 		int status = 0;
 		std::string lastRecv();
+		void exit();
 		static const int LOST = -1;
 		static const int EXIT = -2;
 		static const int ONLINE = 1;

@@ -18,17 +18,30 @@
 
 uint16_t sgPort = 5025;
 CmdHelper::CmdHelper cmdHelper;
+boost::asio::io_service io_service;
+TcpClient::TcpClient client(io_service);
 
-std::string askFreq(ParamSet::Params &e)
+std::string askFreqCmd()
 {
 	return ":FREQ?";
 }
 
-std::string setFreq(ParamSet::Params &e)
+std::string askFreq(ParamSet::Params &params)
+{
+	client.send(askFreqCmd());
+	return client.lastRecv();
+}
+
+std::string setFreq(ParamSet::Params &params)
 {
 	ParamSet::ParamHelper pHelper;
 	std::string value;
-	
+	pHelper.bind("", &value, ParamSet::ParamHelper::TEXT);
+	pHelper.bind("value", &value, ParamSet::ParamHelper::TEXT);
+	pHelper.set(params);
+	std::string cmd = ":FREQ:CENT " + value;
+	client.send(cmd);
+	return askFreq(params);
 }
 
 int initialize()
@@ -39,12 +52,11 @@ int initialize()
 int makeClient(std::string ip, uint16_t port)
 {
     std::string msg;
-    boost::asio::io_service io_service;
-    TcpClient::TcpClient client(io_service);
+
     client.connect(ip, port);
     std::thread thread
     (
-        [&io_service]()
+        []()
     {
         io_service.run();
     });
@@ -52,10 +64,11 @@ int makeClient(std::string ip, uint16_t port)
     {
         std::string msg;
         std::getline(std::cin, msg);
-        client.send(msg);
+
         if (msg == "exit") break;
         if (msg == "clientExit") break;
     }
+	client.exit();
     std::cout << "client exit" << std::endl;
     thread.join();
     return 0;

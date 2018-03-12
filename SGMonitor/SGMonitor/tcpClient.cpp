@@ -37,7 +37,7 @@ namespace TcpClient
 
 	std::string TcpClient::lastRecv()
 	{
-		if (auto status = _receive_msg.wait_for(std::chrono::seconds(_timeout)) == std::future_status::ready)
+		if (_receive_msg.wait_for(std::chrono::seconds(_timeout)) == std::future_status::ready)
 		{
 			return _receive_msg.get();
 		}
@@ -45,6 +45,11 @@ namespace TcpClient
 		{
 			return "MSG NOT VALID";
 		}
+	}
+
+	void TcpClient::exit()
+	{
+		_io.stop();
 	}
 
 	void TcpClient::_on_connect(const boost::system::error_code & err)
