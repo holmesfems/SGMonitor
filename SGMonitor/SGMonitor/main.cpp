@@ -13,13 +13,19 @@
 #include <fstream>
 #include "tcpClient.h"
 #include "CmdHelper.h"
+#include "third_include/nlohmann/json.hpp"
 
 //using CmdGeneratorFunc = std::function<std::string(ParamSet::Params &)>;
 
 uint16_t sgPort = 5025;
+std::string sgIP = "127.0.0.1";
+
 CmdHelper::CmdHelper cmdHelper;
 boost::asio::io_service io_service;
 TcpClient::TcpClient client(io_service);
+
+nlohmann::json configJson;
+std::string  configJsonName = "conf.json";
 
 std::string askFreqCmd()
 {
@@ -46,6 +52,35 @@ std::string setFreq(ParamSet::Params &params)
 
 int initialize()
 {
+	//bind commands
+	cmdHelper.registCmd("askfreq", &askFreq, "get the centre frequency");
+	cmdHelper.registCmd("setfreq", &setFreq, "set the centre frequency to a value");
+	std::ifstream ifs(configJsonName);
+	if (ifs.is_open())
+	{
+		configJson.parse(ifs);
+	}
+	else
+	{
+		configJson["sgIP"] = sgIP;
+		configJson["sgPort"] = sgPort;
+	}
+	ifs.close();
+	return 0;
+}
+
+int saveConfig()
+{
+	std::ofstream ofs(configJsonName);
+	if (ofs.is_open())
+	{
+		ofs << configJson;
+		std::cout << "Save config succeed!" << std::endl;
+	}
+	else
+	{
+		std::cout << "Can't open file \"" + configJsonName + "\"";
+	}
 	return 0;
 }
 
@@ -67,6 +102,7 @@ int makeClient(std::string ip, uint16_t port)
 
         if (msg == "exit") break;
         if (msg == "clientExit") break;
+		std::cout << cmdHelper.exec(msg) << std::endl;
     }
 	client.exit();
     std::cout << "client exit" << std::endl;
@@ -74,10 +110,16 @@ int makeClient(std::string ip, uint16_t port)
     return 0;
 }
 
-
-
-int main(int argc,char *argv[])
+int main(int argc, char *argv[])
 {
-    
-    return 0;
+	initialize();
+	if (argc >= 2)
+	{
+		sgIP = argv[1];
+		if (argc >= 3)
+			sgPort = std::stoi(argv[2]);
+	}
+	saveConfig();
+	makeClient(sgIP, sgPort);
+	return 0;
 }

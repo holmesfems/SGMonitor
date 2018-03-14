@@ -73,6 +73,7 @@
     <ClInclude Include="stringTool.h" />
     <ClInclude Include="stringTool_util.h" />
     <ClInclude Include="tcpClient.h" />
+    <ClInclude Include="third_include\nlohmann\json.hpp" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
