@@ -59,6 +59,8 @@ int initialize()
 	if (ifs.is_open())
 	{
 		configJson.parse(ifs);
+		sgIP = configJson["sgIP"];
+		sgPort = configJson["sgPort"];
 	}
 	else
 	{
