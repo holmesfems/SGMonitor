@@ -78,6 +78,7 @@ int saveConfig()
 	{
 		ofs << configJson;
 		std::cout << "Save config succeed!" << std::endl;
+		ofs.close();
 	}
 	else
 	{
