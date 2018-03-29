@@ -91,12 +91,12 @@ namespace TcpClient
 	{
 		if (err) {
 			std::cout << "connect failed : " << err.message() << std::endl;
-			_connection_status_writer.set_value(FAIL);
+			_connection_status_writer.set_value(TcpClient::FAIL);
 		}
 		else {
 			std::cout << "connected" << std::endl;
 			status = ONLINE;
-			_connection_status_writer.set_value(ONLINE);
+			_connection_status_writer.set_value(TcpClient::ONLINE);
 			std::string msg;
 			_async_receive();
 		}
