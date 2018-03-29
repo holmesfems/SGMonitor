@@ -19,8 +19,8 @@
 
 uint16_t sgPort = 5025;
 std::string sgIP = "127.0.0.1";
-
-CmdHelper::CmdHelper cmdHelper;
+CmdHelper::CmdMap cmdMap;
+CmdHelper::CmdHelper cmdHelper(cmdMap);
 boost::asio::io_service io_service;
 TcpClient::TcpClient client(io_service);
 
