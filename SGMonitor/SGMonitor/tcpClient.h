@@ -28,7 +28,7 @@ namespace TcpClient
 		void connect(std::string ip_address, uint16_t port);
 		void send(std::string msg);
 		int status = 0;
-		std::string lastRecv();
+		std::string lastRecv(int timeout=1000); //milli seconds
 		void exit();
 		static const int LOST = -1;
 		static const int EXIT = -2;
@@ -44,7 +44,6 @@ namespace TcpClient
 		std::future<std::string> _receive_msg;
 		std::promise<std::string> _receive_msg_writer;
 
-		uint _timeout = 1; //Sec
 		void _on_connect(const boost::system::error_code &err);
 		void _async_receive();
 		void _on_receive(const boost::system::error_code &err, size_t bytes_transferred);

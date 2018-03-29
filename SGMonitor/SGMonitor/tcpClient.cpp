@@ -9,6 +9,7 @@
 #include "tcpClient.h"
 #include <thread>
 #include <chrono>
+#include <sstream>
 
 namespace TcpClient
 {
@@ -37,11 +38,21 @@ namespace TcpClient
 			_io.post(boost::bind(&TcpClient::_async_write, this));
 	}
 
-	std::string TcpClient::lastRecv()
+	std::string TcpClient::lastRecv(int timeout)
 	{
-		if (_receive_msg.wait_for(std::chrono::seconds(_timeout)) == std::future_status::ready)
+
+		if (_receive_msg.wait_for(std::chrono::milliseconds(timeout)) == std::future_status::ready)
 		{
-			return _receive_msg.get();
+			try
+			{
+				return _receive_msg.get();
+			}
+			catch (std::future_error e)
+			{
+				std::ostringstream oss;
+				oss << "Future Error" << e.what();
+				return oss.str();
+			}
 		}
 		else
 		{
@@ -89,7 +100,17 @@ namespace TcpClient
 			std::string data = std::string(boost::asio::buffer_cast<const char*>(_receive_buff.data()), bytes_transferred);
 			data = data.substr(0, data.length() - 1);
 			std::cout << "reply = \"" << data << "\"" << std::endl;
-			_receive_msg_writer.set_value(data); //Msg is ready
+			try
+			{
+				_receive_msg_writer.set_value(data); //Msg is ready
+			}
+			catch (std::future_error e)
+			{
+				if (e.code() != std::future_errc::promise_already_satisfied)
+				{
+					std::cout << "Promise Error Occured: " << e.what() << endl;
+				}
+			}
 			_receive_buff.consume(_receive_buff.size());
 			_async_receive();
 			//if(status == ONLINE)

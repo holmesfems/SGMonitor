@@ -49,6 +49,7 @@ std::string setFreq(ParamSet::Params &params)
 		return "Invalid setfreq cmd";
 	std::string cmd = ":FREQ:CENT " + value;
 	client.send(cmd);
+	client.lastRecv(100); // clear stack
 	return askFreq(params);
 }
 
