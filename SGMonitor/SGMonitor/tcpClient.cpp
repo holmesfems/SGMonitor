@@ -108,7 +108,7 @@ namespace TcpClient
 			{
 				if (e.code() != std::future_errc::promise_already_satisfied)
 				{
-					std::cout << "Promise Error Occured: " << e.what() << endl;
+					std::cout << "Promise Error Occured: " << e.what() << std::endl;
 				}
 			}
 			_receive_buff.consume(_receive_buff.size());
