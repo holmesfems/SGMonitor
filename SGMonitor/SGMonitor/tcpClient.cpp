@@ -22,7 +22,7 @@ namespace TcpClient
 
 	void TcpClient::connect(std::string ip_address, uint16_t port)
 	{
-		std::promise<const int> csw;
+		std::promise<int> csw;
 		_connection_status_writer.swap(csw);
 		_connection_status = _connection_status_writer.get_future();
 		_socket.async_connect(
@@ -91,12 +91,13 @@ namespace TcpClient
 	{
 		if (err) {
 			std::cout << "connect failed : " << err.message() << std::endl;
-			_connection_status_writer.set_value(FAIL);
+			status = FAIL;
+			_connection_status_writer.set_value(status);
 		}
 		else {
 			std::cout << "connected" << std::endl;
 			status = ONLINE;
-			_connection_status_writer.set_value(ONLINE);
+			_connection_status_writer.set_value(status);
 			std::string msg;
 			_async_receive();
 		}
