@@ -44,7 +44,7 @@ std::string setFreq(ParamSet::Params &params)
 	std::string value;
 	pHelper.bind("", &value, ParamSet::ParamHelper::TEXT);
 	pHelper.bind("value", &value, ParamSet::ParamHelper::TEXT);
-	if value.empty()
+	if(value.empty())
 		return "Invalid askfreq cmd";
 	pHelper.set(params);
 	std::string cmd = ":FREQ:CENT " + value;
