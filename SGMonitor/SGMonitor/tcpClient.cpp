@@ -17,6 +17,7 @@ namespace TcpClient
 		_socket(io_service),
 		_strand(io_service)
 	{
+		_receive_msg = _receive_msg_writer.get_future(); //Reset msg_status
 	}
 
 	void TcpClient::connect(std::string ip_address, uint16_t port)
@@ -30,7 +31,6 @@ namespace TcpClient
 	{
 		bool is_sending = !_msgQueue.empty();
 		_msgQueue.push(msg);
-		_receive_msg = _receive_msg_writer.get_future(); //Reset msg_status
 		if(!is_sending)
 			_io.post(boost::bind(&TcpClient::_async_write, this));
 	}

@@ -110,7 +110,7 @@ int makeClient(std::string ip, uint16_t port)
         if (msg == "exit") break;
         if (msg == "clientExit") break;
 		std::string reply = cmdHelper.exec(msg);
-		std::cout << "Reply:" << reply << std::endl;
+		std::cout << "Reply: " << reply << std::endl;
     }
 	client.exit();
     std::cout << "client exit" << std::endl;
