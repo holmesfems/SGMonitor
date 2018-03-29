@@ -45,8 +45,8 @@ namespace TcpClient
 		std::future<std::string> _receive_msg;
 		std::promise<std::string> _receive_msg_writer;
 
-		std::future<int> _connection_status;
-		std::promise<int> _connection_status_writer;
+		std::future<const int> _connection_status;
+		std::promise<const int> _connection_status_writer;
 		
 		void _on_connect(const boost::system::error_code &err);
 		void _async_receive();
