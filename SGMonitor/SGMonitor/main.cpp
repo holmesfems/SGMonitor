@@ -44,31 +44,12 @@ std::string setFreq(ParamSet::Params &params)
 	std::string value;
 	pHelper.bind("", &value, ParamSet::ParamHelper::TEXT);
 	pHelper.bind("value", &value, ParamSet::ParamHelper::TEXT);
+	if value.empty()
+		return "Invalid askfreq cmd";
 	pHelper.set(params);
 	std::string cmd = ":FREQ:CENT " + value;
 	client.send(cmd);
 	return askFreq(params);
-}
-
-int initialize()
-{
-	//bind commands
-	cmdHelper.registCmd("askfreq", &askFreq, "get the centre frequency");
-	cmdHelper.registCmd("setfreq", &setFreq, "set the centre frequency to a value");
-	std::ifstream ifs(configJsonName);
-	if (ifs.is_open())
-	{
-		ifs >> configJson;
-		sgIP = configJson["sgIP"];
-		sgPort = configJson["sgPort"];
-	}
-	else
-	{
-		configJson["sgIP"] = sgIP;
-		configJson["sgPort"] = sgPort;
-	}
-	ifs.close();
-	return 0;
 }
 
 int saveConfig()
@@ -84,6 +65,29 @@ int saveConfig()
 	{
 		std::cout << "Can't open file \"" + configJsonName + "\"";
 	}
+	return 0;
+}
+
+int initialize()
+{
+	//bind commands
+	cmdHelper.registCmd("askfreq", &askFreq, "get the centre frequency");
+	cmdHelper.registCmd("setfreq", &setFreq, "set the centre frequency to a value");
+	std::ifstream ifs(configJsonName);
+	if (ifs.is_open())
+	{
+		std::cout << "Read Configuation file succeed!" << std::endl;
+		ifs >> configJson;
+		sgIP = configJson["sgIP"];
+		sgPort = configJson["sgPort"];
+	}
+	else
+	{
+		configJson["sgIP"] = sgIP;
+		configJson["sgPort"] = sgPort;
+		saveConfig();
+	}
+	ifs.close();
 	return 0;
 }
 
@@ -105,7 +109,7 @@ int makeClient(std::string ip, uint16_t port)
 
         if (msg == "exit") break;
         if (msg == "clientExit") break;
-		std::cout << cmdHelper.exec(msg) << std::endl;
+		std::cout << "Reply:" << cmdHelper.exec(msg) << std::endl;
     }
 	client.exit();
     std::cout << "client exit" << std::endl;
@@ -121,8 +125,8 @@ int main(int argc, char *argv[])
 		sgIP = argv[1];
 		if (argc >= 3)
 			sgPort = std::stoi(argv[2]);
+		saveConfig();
 	}
-	saveConfig();
 	makeClient(sgIP, sgPort);
 	return 0;
 }
