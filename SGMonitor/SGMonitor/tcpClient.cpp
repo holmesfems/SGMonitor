@@ -40,7 +40,7 @@ namespace TcpClient
 
 	bool TcpClient::is_connected() 
 	{
-		return _socket.is_open();
+		return (status == ONLINE);
 	}
 
 	std::string TcpClient::lastRecv(int timeout)
@@ -102,6 +102,12 @@ namespace TcpClient
 		}
 		else {
 			std::cout << "recieve succeed " << "length = " << bytes_transferred << std::endl;
+			if (bytes_transferred == 0 && err == boost::asio::error::eof)
+			{
+				std::cout << "Connection lost!" << std::endl;
+				status = LOST;
+				return;
+			}
 			std::string data = std::string(boost::asio::buffer_cast<const char*>(_receive_buff.data()), bytes_transferred);
 			data = data.substr(0, data.length() - 1);
 			std::cout << "reply = \"" << data << "\"" << std::endl;
