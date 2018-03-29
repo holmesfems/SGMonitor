@@ -33,17 +33,18 @@ namespace ParamSet
 			VariableBind::iterator iter;
 			if ((iter = _vb.find(item.first)) != _vb.end()) {
 				VariableBindItem vbi = iter->second;
-				switch (vbi.second) {
-				case INTEGER:
-					*((int32_t *)(vbi.first)) = StringTool::convertTo<int32_t>(item.second);
-					break;
-				case TEXT:
-					*((std::string *)(vbi.first)) = item.second;
-					break;
-				case FLOAT64:
-					*((double_t *)(vbi.first)) = StringTool::convertTo<double_t>(item.second);
-					break;
-				}
+				if(!item.second.empty())
+					switch (vbi.second) {
+					case INTEGER:
+						*((int32_t *)(vbi.first)) = StringTool::convertTo<int32_t>(item.second);
+						break;
+					case TEXT:
+						*((std::string *)(vbi.first)) = item.second;
+						break;
+					case FLOAT64:
+						*((double_t *)(vbi.first)) = StringTool::convertTo<double_t>(item.second);
+						break;
+					}
 			}
 		}
 	}

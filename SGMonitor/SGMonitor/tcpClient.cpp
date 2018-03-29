@@ -32,7 +32,7 @@ namespace TcpClient
 		_msgQueue.push(msg);
 		std::promise<std::string> newWriter;
 		_receive_msg_writer.swap(newWriter);
-		_receive_msg = _receive_msg_writer.get_future();
+		_receive_msg = _receive_msg_writer.get_future(); // reset future-promise
 		if(!is_sending)
 			_io.post(boost::bind(&TcpClient::_async_write, this));
 	}
