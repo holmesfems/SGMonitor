@@ -26,6 +26,7 @@ namespace TcpClient
 		TcpClient(boost::asio::io_service& io_service);
 		~TcpClient() {}
 		void connect(std::string ip_address, uint16_t port);
+		bool is_connected();
 		void send(std::string msg);
 		int status = 0;
 		std::string lastRecv(int timeout=1000); //milli seconds

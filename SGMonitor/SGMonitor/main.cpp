@@ -103,7 +103,7 @@ int makeClient(std::string ip, uint16_t port)
     {
         io_service.run();
     });
-    while (true)
+    while (client.is_connected())
     {
         std::string msg;
         std::getline(std::cin, msg);

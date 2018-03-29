@@ -38,6 +38,11 @@ namespace TcpClient
 			_io.post(boost::bind(&TcpClient::_async_write, this));
 	}
 
+	bool TcpClient::is_connected() 
+	{
+		return _socket.is_open();
+	}
+
 	std::string TcpClient::lastRecv(int timeout)
 	{
 
