@@ -58,7 +58,7 @@ int initialize()
 	std::ifstream ifs(configJsonName);
 	if (ifs.is_open())
 	{
-		configJson.parse(ifs);
+		ifs >> configJson;
 		sgIP = configJson["sgIP"];
 		sgPort = configJson["sgPort"];
 	}
