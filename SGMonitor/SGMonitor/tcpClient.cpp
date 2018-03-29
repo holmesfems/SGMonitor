@@ -22,7 +22,7 @@ namespace TcpClient
 
 	void TcpClient::connect(std::string ip_address, uint16_t port)
 	{
-		std::promise<int> csw;
+		std::promise<const int> csw;
 		_connection_status_writer.swap(csw);
 		_connection_status = _connection_status_writer.get_future();
 		_socket.async_connect(
