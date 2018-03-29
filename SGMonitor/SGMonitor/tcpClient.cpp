@@ -22,6 +22,9 @@ namespace TcpClient
 
 	void TcpClient::connect(std::string ip_address, uint16_t port)
 	{
+		std::promise<int> csw;
+		_connection_status_writer.swap(csw);
+		_connection_status = _connection_status_writer.get_future();
 		_socket.async_connect(
 			boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(ip_address), port),
 			boost::bind(&TcpClient::TcpClient::_on_connect, this, boost::asio::placeholders::error));
@@ -38,9 +41,23 @@ namespace TcpClient
 			_io.post(boost::bind(&TcpClient::_async_write, this));
 	}
 
-	bool TcpClient::is_connected() 
+	bool TcpClient::is_connected(int timeout) 
 	{
-		return (status == ONLINE);
+		try
+		{
+			if (_connection_status.wait_for(std::chrono::milliseconds(timeout)) == std::future_status::ready)
+			{
+				return (_connection_status.get()) == ONLINE;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		catch (std::future_error e)
+		{
+			return status == ONLINE;
+		}
 	}
 
 	std::string TcpClient::lastRecv(int timeout)
@@ -74,10 +91,12 @@ namespace TcpClient
 	{
 		if (err) {
 			std::cout << "connect failed : " << err.message() << std::endl;
+			_connection_status_writer.set_value(FAIL);
 		}
 		else {
 			std::cout << "connected" << std::endl;
 			status = ONLINE;
+			_connection_status_writer.set_value(ONLINE);
 			std::string msg;
 			_async_receive();
 		}
