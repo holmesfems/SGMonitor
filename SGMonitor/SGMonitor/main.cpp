@@ -58,7 +58,7 @@ int saveConfig()
 	std::ofstream ofs(configJsonName);
 	if (ofs.is_open())
 	{
-		ofs << configJson;
+		ofs << configJson.dump(4);
 		std::cout << "Save config succeed!" << std::endl;
 		ofs.close();
 	}
